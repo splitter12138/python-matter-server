@@ -23,6 +23,8 @@ class EventType(Enum):
 
 
 class APICommand(str, Enum):
+    """DIY API commands"""
+    GET_CERTIFICATES = "get_certificates"
     """Enum with all known API commands."""
 
     START_LISTENING = "start_listening"

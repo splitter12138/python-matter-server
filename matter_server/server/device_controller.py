@@ -85,7 +85,7 @@ class MatterDeviceController:
         """Async initialize of controller."""
         # (re)fetch all PAA certificates once at startup
         # NOTE: this must be done before initializing the controller
-        await fetch_certificates()
+        await fetch_certificates(True, True, True)
         # Instantiate the underlying ChipDeviceController instance on the Fabric
         self.chip_controller = self.server.stack.fabric_admin.NewController(
             paaTrustStorePath=str(PAA_ROOT_CERTS_DIR)
@@ -127,6 +127,11 @@ class MatterDeviceController:
         await self._call_sdk(self.chip_controller.Shutdown)
         LOGGER.debug("Stopped.")
 
+    @api_command(APICommand.GET_CERTIFICATES)
+    async def get_certificates(self, get_test_certificates: bool = True, get_from_git: bool = False) -> Any:
+        fetch_count = await fetch_certificates(get_test_certificates, True, get_from_git)
+        return {'update_count': fetch_count}
+
     @api_command(APICommand.GET_NODES)
     def get_nodes(self, only_available: bool = False) -> list[MatterNodeData]:
         """Return all Nodes known to the server."""
@@ -155,7 +160,7 @@ class MatterDeviceController:
 
         # perform a quick delta sync of certificates to make sure
         # we have the latest paa root certs
-        await fetch_certificates()
+        # await fetch_certificates()
         node_id = self._get_next_node_id()
 
         success = await self._call_sdk(
@@ -200,7 +205,7 @@ class MatterDeviceController:
         # we have the latest paa root certs
         # NOTE: Its not very clear if the newly fetched certificates can be used without
         # restarting the device controller
-        await fetch_certificates()
+        # await fetch_certificates()
 
         node_id = self._get_next_node_id()
 

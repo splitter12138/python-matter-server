@@ -141,6 +141,7 @@ async def fetch_git_certificates() -> int:
 async def fetch_certificates(
     fetch_test_certificates: bool = True,
     fetch_production_certificates: bool = True,
+    fetch_certificates_from_git: bool = False
 ) -> int:
     """Fetch PAA Certificates."""
 
@@ -149,7 +150,7 @@ async def fetch_certificates(
         fetch_production_certificates=fetch_production_certificates,
     )
 
-    if fetch_test_certificates:
+    if fetch_certificates_from_git:
         fetch_count += await fetch_git_certificates()
 
     return fetch_count
